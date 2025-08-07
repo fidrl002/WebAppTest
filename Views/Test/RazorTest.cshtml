@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "RazorTest Page";
+
+    var num1 = 3;
+    var num2 = 2;
+
+    var list = new string[] { "hello", "world", "goodbye", "world" };
+
+    var coordinateObjects = new[] { new { x = 1, y = 1 }, new { x = 2, y = 4 }, new { x = 3, y = 6 }, new { x = 4, y = 8 } };
+}
+
+<h1>TestController - RazorTest View</h1>
+
+<p>This is the RazorTest file in the Test folder using the TestController</p>
+
+<p>
+    1) @num1 + @num2 = @(num1 + num2);
+</p>
+
+<p>2) String array
+	<ul>
+		@foreach (var num in list)
+		{
+			<li>list item: @num, @num</li>
+		}
+	</ul>
+</p>
+
+<p>3) Coordinates:
+	<ol>
+		@for (var i = 0; i < coordinateObjects.Length; i++)
+		{
+			<li>@coordinateObjects[i].x, @coordinateObjects[i].y</li>
+		}
+
+	</ol>
+</p>
+
+@*
+	2.4:
+	Use a anchor tag hyperlink and a HTML form to pass parameters to the Action in the Controller
+		and then when activated show these values on the page.
+	Use these to pass a value for the {id} url route segment, a query string value and a form value.
+	Where possible use html tag helpers.
+
+	2.5:
+	Configure a View to determine which type of parameter ({route}, Form or QueryString) has priority in the Action Signature.
+	Hint: create a HTML Form element, with an input parameter, anchor tag and a {id} route parameter
+*@
+
+<p>4)
+	<form method="post" asp-controller="Test" asp-action="RazorTest" asp-route-id="123" asp-route-value="hello" asp-route-text="world">
+		id: <input type="text" name="id" />
+		form value: <input type="text" name="text" />
+		<button type="submit">Activate</button>
+	</form>
+
+	<br />
+	Or <a asp-controller="Test" asp-action="RazorTest" asp-route-id="123" asp-route-value="hello" asp-route-text="world">Click here</a> to send some default values
+</p>
+
+<div>
+	Values:
+	<br />
+		ID: @ViewBag.id
+	<br />
+		Query String Value: @ViewBag.qsValue
+	<br />
+		Form Value: @ViewBag.formValue
+</div>
