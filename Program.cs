@@ -1,8 +1,13 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using WebAppTest.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+builder.Services.AddDbContext<WebAppTestContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WebAppTestContext") ?? throw new InvalidOperationException("Connection string 'WebAppTestContext' not found.")));
 
 var app = builder.Build();
 
