@@ -3,11 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using WebAppTest.Data;
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<AmazonOrders2025Context>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AmazonOrders2025Context")));
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-builder.Services.AddDbContext<WebAppTestContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WebAppTestContext") ?? throw new InvalidOperationException("Connection string 'WebAppTestContext' not found.")));
 
 var app = builder.Build();
 

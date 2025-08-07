@@ -6,26 +6,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppTest.Data;
-using WebAppTest.Models.CodeFirst;
+using WebAppTest.Models;
 
 namespace WebAppTest.Controllers
 {
-    public class ExampleItemsController : Controller
+    public class ItemsController : Controller
     {
-        private readonly WebAppTestContext _context;
+        private readonly AmazonOrders2025Context _context;
 
-        public ExampleItemsController(WebAppTestContext context)
+        public ItemsController(AmazonOrders2025Context context)
         {
             _context = context;
         }
 
-        // GET: ExampleItems
+        // GET: Items
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ExampleItem.ToListAsync());
+            var amazonOrders2025Context = _context.Items.Include(i => i.Category); // Include() performs join from FK -> PK
+            return View(await amazonOrders2025Context.ToListAsync());
         }
 
-        // GET: ExampleItems/Details/5
+        // GET: Items/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +34,42 @@ namespace WebAppTest.Controllers
                 return NotFound();
             }
 
-            var exampleItem = await _context.ExampleItem
-                .FirstOrDefaultAsync(m => m.itemID == id);
-            if (exampleItem == null)
+            var item = await _context.Items
+                .Include(i => i.Category)
+                .FirstOrDefaultAsync(m => m.ItemId == id);
+            if (item == null)
             {
                 return NotFound();
             }
 
-            return View(exampleItem);
+            return View(item);
         }
 
-        // GET: ExampleItems/Create
+        // GET: Items/Create
         public IActionResult Create()
         {
+            ViewData["CategoryId"] = new SelectList(_context.ItemCategories, "CategoryId", "CategoryId");
             return View();
         }
 
-        // POST: ExampleItems/Create
+        // POST: Items/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("itemID,itemName,itemPrice")] ExampleItem exampleItem)
+        public async Task<IActionResult> Create([Bind("ItemId,ItemName,ItemDescription,ItemCost,ItemImage,CategoryId")] Item item)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(exampleItem);
+                _context.Add(item);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(exampleItem);
+            ViewData["CategoryId"] = new SelectList(_context.ItemCategories, "CategoryId", "CategoryId", item.CategoryId);
+            return View(item);
         }
 
-        // GET: ExampleItems/Edit/5
+        // GET: Items/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +77,23 @@ namespace WebAppTest.Controllers
                 return NotFound();
             }
 
-            var exampleItem = await _context.ExampleItem.FindAsync(id);
-            if (exampleItem == null)
+            var item = await _context.Items.FindAsync(id);
+            if (item == null)
             {
                 return NotFound();
             }
-            return View(exampleItem);
+            ViewData["CategoryId"] = new SelectList(_context.ItemCategories, "CategoryId", "CategoryId", item.CategoryId);
+            return View(item);
         }
 
-        // POST: ExampleItems/Edit/5
+        // POST: Items/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("itemID,itemName,itemPrice")] ExampleItem exampleItem)
+        public async Task<IActionResult> Edit(int id, [Bind("ItemId,ItemName,ItemDescription,ItemCost,ItemImage,CategoryId")] Item item)
         {
-            if (id != exampleItem.itemID)
+            if (id != item.ItemId)
             {
                 return NotFound();
             }
@@ -97,12 +102,12 @@ namespace WebAppTest.Controllers
             {
                 try
                 {
-                    _context.Update(exampleItem);
+                    _context.Update(item);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ExampleItemExists(exampleItem.itemID))
+                    if (!ItemExists(item.ItemId))
                     {
                         return NotFound();
                     }
@@ -113,10 +118,11 @@ namespace WebAppTest.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(exampleItem);
+            ViewData["CategoryId"] = new SelectList(_context.ItemCategories, "CategoryId", "CategoryId", item.CategoryId);
+            return View(item);
         }
 
-        // GET: ExampleItems/Delete/5
+        // GET: Items/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,34 +130,35 @@ namespace WebAppTest.Controllers
                 return NotFound();
             }
 
-            var exampleItem = await _context.ExampleItem
-                .FirstOrDefaultAsync(m => m.itemID == id);
-            if (exampleItem == null)
+            var item = await _context.Items
+                .Include(i => i.Category)
+                .FirstOrDefaultAsync(m => m.ItemId == id);
+            if (item == null)
             {
                 return NotFound();
             }
 
-            return View(exampleItem);
+            return View(item);
         }
 
-        // POST: ExampleItems/Delete/5
+        // POST: Items/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var exampleItem = await _context.ExampleItem.FindAsync(id);
-            if (exampleItem != null)
+            var item = await _context.Items.FindAsync(id);
+            if (item != null)
             {
-                _context.ExampleItem.Remove(exampleItem);
+                _context.Items.Remove(item);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ExampleItemExists(int id)
+        private bool ItemExists(int id)
         {
-            return _context.ExampleItem.Any(e => e.itemID == id);
+            return _context.Items.Any(e => e.ItemId == id);
         }
     }
 }
