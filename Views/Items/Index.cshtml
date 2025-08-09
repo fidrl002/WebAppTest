@@ -4,42 +4,68 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1 style="text-align: center">Shop Items</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-outline-primary" asp-action="Create">Create New</a>
 </p>
 
-    <div class="row row-cols-3 g-4">
-        @foreach (var item in Model) {
-        <div class="col">
+<form method="post" asp-controller="Items" asp-action="Index">
+	<div class="input-group mb-3">
+	    <span class="input-group-text">Item Search</span>
+		<input type="text" max-length="100" class="form-control" placeholder="Type here..."
+            value="@ViewBag.searchText" title="Search by item name. Max 100 chars." name="searchText" />
+	</div>
+	<div class="mb-3">
+		<button type="submit" class="btn btn-outline-primary">Submit</button>
+		<a asp-controller="Items" asp-action="Index" button="reset" class="btn btn-outline-danger">Reset</a>
+	</div>
+</form>
+<div>
+	@{
+		if (ViewBag.itemCount > 0)
+		{
+			<p>@ViewBag.itemCount Results:</p>
+		}
+		else if (!string.IsNullOrWhiteSpace(ViewBag.searchText))
+		{
+			<p style="color: darkred; padding-bottom: 10px">No results were found!</p>
+		}
+	}
+</div>
+
+<div class="row row-cols-3 g-4">
+	@foreach (var item in Model)
+	{
+		<div class="col">
 			<div class="card" style="">
 				<div class="card-body">
 					<h5 class="card-title">@Html.DisplayFor(modelItem => item.ItemName)</h5>
 					<p class="card-text">Category: @Html.DisplayFor(modelItem => item.Category.CategoryName)</p>
-                    <p class="card-text">Description:
-                        @{
-                            if (item.ItemDescription.Length > 100)
-                            {
-                                string shortDesc = item.ItemDescription.Substring(0, 100) + "...";
-                                @Html.DisplayFor(modelItem => shortDesc);
-                            }
-                            else
-                            {
-                                @Html.DisplayFor(modelItem => item.ItemDescription);
-                            }
-                        }
-                        </p>
+					<p class="card-text">
+						Description:
+						@{
+							if (item.ItemDescription.Length > 100)
+							{
+								string shortDesc = item.ItemDescription.Substring(0, 100) + "...";
+								@Html.DisplayFor(modelItem => shortDesc);
+							}
+							else
+							{
+								@Html.DisplayFor(modelItem => item.ItemDescription);
+							}
+						}
+					</p>
 					<p class="card-text">Cost: @Html.DisplayFor(modelItem => item.ItemCost)</p>
-                    <p>
+					<p>
 						<img src="@Html.DisplayFor(modelItem => item.ItemImage)" class="card-img-bottom" style="height: 50%; width: 50%" alt="@Html.DisplayFor(modelItem => item.ItemName)" />
-                    </p>
-                    <a asp-action="Details" asp-controller="Items" asp-route-id="@item.ItemId" class="btn btn-primary">View Item Details</a>
+					</p>
+					<a asp-action="Details" asp-controller="Items" asp-route-id="@item.ItemId" class="btn btn-primary">View Item Details</a>
 				</div>
 			</div>
-        </div>
-        }
-    </div>
+		</div>
+	}
+</div>
 
 
 @* <table class="table">
