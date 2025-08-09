@@ -20,9 +20,22 @@ namespace WebAppTest.Controllers
         }
 
         // GET: Items
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchText)
         {
-            var amazonOrders2025Context = _context.Items.Include(i => i.Category); // Include() performs join from FK -> PK
+            ViewBag.searchText = searchText;
+
+            var amazonOrders2025Context = _context.Items
+                .Include(i => i.Category) // Include() performs join from FK -> PK
+                .OrderBy(i => i.ItemName) // changes data type and can cause issues
+                .AsQueryable(); // swap the data type back to an IQueryable
+
+            if (!string.IsNullOrWhiteSpace(searchText)) // determine if search text is empty
+            {
+                amazonOrders2025Context = amazonOrders2025Context
+                    .Where(i => i.ItemName.Contains(searchText));
+                ViewBag.itemCount = amazonOrders2025Context.Count();
+            }
+
             return View(await amazonOrders2025Context.ToListAsync());
         }
 
