@@ -9,7 +9,40 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+
+    <div class="row row-cols-3 g-4">
+        @foreach (var item in Model) {
+        <div class="col">
+			<div class="card" style="">
+				<div class="card-body">
+					<h5 class="card-title">@Html.DisplayFor(modelItem => item.ItemName)</h5>
+					<p class="card-text">Category: @Html.DisplayFor(modelItem => item.Category.CategoryName)</p>
+                    <p class="card-text">Description:
+                        @{
+                            if (item.ItemDescription.Length > 100)
+                            {
+                                string shortDesc = item.ItemDescription.Substring(0, 100) + "...";
+                                @Html.DisplayFor(modelItem => shortDesc);
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.ItemDescription);
+                            }
+                        }
+                        </p>
+					<p class="card-text">Cost: @Html.DisplayFor(modelItem => item.ItemCost)</p>
+                    <p>
+						<img src="@Html.DisplayFor(modelItem => item.ItemImage)" class="card-img-bottom" style="height: 50%; width: 50%" alt="@Html.DisplayFor(modelItem => item.ItemName)" />
+                    </p>
+                    <a asp-action="Details" asp-controller="Items" asp-route-id="@item.ItemId" class="btn btn-primary">View Item Details</a>
+				</div>
+			</div>
+        </div>
+        }
+    </div>
+
+
+@* <table class="table">
     <thead>
         <tr>
             <th>
@@ -56,4 +89,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table> *@
