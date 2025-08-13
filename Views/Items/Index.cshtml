@@ -11,34 +11,42 @@
 </p>
 
 <form method="post" asp-controller="Items" asp-action="Index">
-	<div class="input-group mb-3">
-	    <span class="input-group-text">Item Search</span>
-		<input type="text" max-length="100" class="form-control" placeholder="Type here..."
-            value="@ViewBag.searchText" title="Search by item name. Max 100 chars." name="searchText" />
-	</div>
-	<div class="mb-3">
-		<button type="submit" class="btn btn-outline-primary">Submit</button>
-		<a asp-controller="Items" asp-action="Index" button="reset" class="btn btn-outline-danger">Reset</a>
+	<div class="row g-2">
+		<div class="col-lg-10">
+			<div class="input-group mb-3">
+				<span class="input-group-text">Item Search</span>
+				<input type="text" max-length="100" class="form-control" placeholder="Type here..."
+					   value="@ViewBag.searchText" title="Search by item name. Max 100 chars." name="searchText" />
+				<select class="form-select" name="category" asp-items="@ViewBag.CategoryList" title="View items for a specific category">
+					<option value="">All Categories...</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-lg">
+			<button type="submit" class="btn btn-outline-primary">Submit</button>
+			<a asp-controller="Items" asp-action="Index" button="reset" class="btn btn-outline-danger">Reset</a>
+		</div>
 	</div>
 </form>
+
 <div>
 	@{
 		if (ViewBag.itemCount > 0)
 		{
-			<p>@ViewBag.itemCount Results:</p>
+			<p>@ViewBag.itemCount @ViewBag.plural</p>
 		}
-		else if (!string.IsNullOrWhiteSpace(ViewBag.searchText))
+		else
 		{
-			<p style="color: darkred; padding-bottom: 10px">No results were found!</p>
+			<h5 class="text-danger mb-4">No results were found!</h5>
 		}
 	}
 </div>
 
-<div class="row row-cols-3 g-4">
+<div class="row row-cols-4 g-4">
 	@foreach (var item in Model)
 	{
-		<div class="col">
-			<div class="card" style="">
+		<div class="col col-sm-3">
+			<div class="card">
 				<div class="card-body">
 					<h5 class="card-title">@Html.DisplayFor(modelItem => item.ItemName)</h5>
 					<p class="card-text">Category: @Html.DisplayFor(modelItem => item.Category.CategoryName)</p>
@@ -47,7 +55,7 @@
 						@{
 							if (item.ItemDescription.Length > 100)
 							{
-								string shortDesc = item.ItemDescription.Substring(0, 100) + "...";
+								string shortDesc = item.ItemDescription.Substring(0, 100).Trim() + "...";
 								@Html.DisplayFor(modelItem => shortDesc);
 							}
 							else
@@ -58,7 +66,7 @@
 					</p>
 					<p class="card-text">Cost: @Html.DisplayFor(modelItem => item.ItemCost)</p>
 					<p>
-						<img src="@Html.DisplayFor(modelItem => item.ItemImage)" class="card-img-bottom" style="height: 50%; width: 50%" alt="@Html.DisplayFor(modelItem => item.ItemName)" />
+						<img src="@Html.DisplayFor(modelItem => item.ItemImage)" class="card-img-bottom" alt="@Html.DisplayFor(modelItem => item.ItemName)" />
 					</p>
 					<a asp-action="Details" asp-controller="Items" asp-route-id="@item.ItemId" class="btn btn-primary">View Item Details</a>
 				</div>
@@ -67,52 +75,3 @@
 	}
 </div>
 
-
-@* <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ItemName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ItemDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ItemCost)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ItemImage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemCost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemImage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ItemId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ItemId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ItemId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table> *@

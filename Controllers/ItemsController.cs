@@ -20,21 +20,48 @@ namespace WebAppTest.Controllers
         }
 
         // GET: Items
-        public async Task<IActionResult> Index(string searchText)
+        public async Task<IActionResult> Index(string searchText, int? category)
         {
+            #region CategoriesQuery
+            var Categories = _context.ItemCategories
+                .Where(c => c.ParentCategory == null)
+                .OrderBy(c => c.CategoryName)
+                .Select(p => new
+                {
+                    p.CategoryId,
+                    p.CategoryName
+                })
+                .ToList();
+
+            ViewBag.CategoryList = new SelectList(Categories,
+                                    nameof(ItemCategory.CategoryId),
+                                    nameof(ItemCategory.CategoryName),
+                                    category); // keeps the category value in the view
+            #endregion
+
+            #region ItemQuery
             ViewBag.searchText = searchText;
 
             var amazonOrders2025Context = _context.Items
                 .Include(i => i.Category) // Include() performs join from FK -> PK
-                .OrderBy(i => i.ItemName) // changes data type and can cause issues
-                .AsQueryable(); // swap the data type back to an IQueryable
+                .OrderBy(i => i.ItemName)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchText)) // determine if search text is empty
             {
                 amazonOrders2025Context = amazonOrders2025Context
                     .Where(i => i.ItemName.Contains(searchText));
-                ViewBag.itemCount = amazonOrders2025Context.Count();
             }
+
+            if (category.HasValue)
+            {
+                amazonOrders2025Context = amazonOrders2025Context
+                    .Where(i => i.Category.ParentCategoryId == category);
+            }
+
+            ViewBag.plural = (ViewBag.itemCount == 1) ? "result:" : "results:";
+            ViewBag.itemCount = amazonOrders2025Context.Count();
+            #endregion
 
             return View(await amazonOrders2025Context.ToListAsync());
         }
