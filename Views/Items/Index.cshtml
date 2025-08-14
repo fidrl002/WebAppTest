@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebAppTest.Models.Item>
+﻿@model WebAppTest.ViewModels.ItemSearchViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -15,9 +15,9 @@
 		<div class="col-lg-10">
 			<div class="input-group mb-3">
 				<span class="input-group-text">Item Search</span>
-				<input type="text" max-length="100" class="form-control" placeholder="Type here..."
-					   value="@ViewBag.searchText" title="Search by item name. Max 100 chars." name="searchText" />
-				<select class="form-select" name="category" asp-items="@ViewBag.CategoryList" title="View items for a specific category">
+				<input asp-for="SearchText" type="text" max-length="100" class="form-control" placeholder="Type here..."
+					   title="Search by item name. Max 100 chars."/>
+				<select asp-for="CategoryId" asp-items="Model.CategoryList" class="form-select" title="View items for a specific category">
 					<option value="">All Categories...</option>
 				</select>
 			</div>
@@ -43,32 +43,44 @@
 </div>
 
 <div class="row row-cols-4 g-4">
-	@foreach (var item in Model)
+	@foreach (var item in Model.ItemList)
 	{
 		<div class="col col-sm-3">
 			<div class="card">
 				<div class="card-body">
-					<h5 class="card-title">@Html.DisplayFor(modelItem => item.ItemName)</h5>
-					<p class="card-text">Category: @Html.DisplayFor(modelItem => item.Category.CategoryName)</p>
+					<h5 class="card-title">@Html.DisplayFor(modelItem => item.TheItem.ItemName)</h5>
+					<p class="card-text">Category: @Html.DisplayFor(modelItem => item.TheItem.Category.CategoryName)</p>
 					<p class="card-text">
 						Description:
 						@{
-							if (item.ItemDescription.Length > 100)
+							if (item.TheItem.ItemDescription.Length > 100)
 							{
-								string shortDesc = item.ItemDescription.Substring(0, 100).Trim() + "...";
+								string shortDesc = item.TheItem.ItemDescription.Substring(0, 100).Trim() + "...";
 								@Html.DisplayFor(modelItem => shortDesc);
 							}
 							else
 							{
-								@Html.DisplayFor(modelItem => item.ItemDescription);
+								@Html.DisplayFor(modelItem => item.TheItem.ItemDescription)
+								;
 							}
 						}
 					</p>
-					<p class="card-text">Cost: @Html.DisplayFor(modelItem => item.ItemCost)</p>
+					<p class="card-text">Cost: @Html.DisplayFor(modelItem => item.TheItem.ItemCost)</p>
 					<p>
-						<img src="@Html.DisplayFor(modelItem => item.ItemImage)" class="card-img-bottom" alt="@Html.DisplayFor(modelItem => item.ItemName)" />
+						<img src="@Html.DisplayFor(modelItem => item.TheItem.ItemImage)" class="card-img-bottom" alt="@Html.DisplayFor(modelItem => item.TheItem.ItemName)" />
 					</p>
-					<a asp-action="Details" asp-controller="Items" asp-route-id="@item.ItemId" class="btn btn-primary">View Item Details</a>
+					<p class="card-text">
+						Rating:
+						@if(item.ReviewCount > 0)
+						{
+							<span>@Html.DisplayFor(r => item.AvgRating) across @item.ReviewCount Reviews</span>
+						}
+						else
+						{
+							<span>This item has not been reviewed</span>
+						}
+					</p>
+					<a asp-action="Details" asp-controller="Items" asp-route-id="@item.TheItem.ItemId" class="btn btn-primary">View Item Details</a>
 				</div>
 			</div>
 		</div>
