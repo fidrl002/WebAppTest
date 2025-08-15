@@ -4,6 +4,15 @@
     ViewData["Title"] = "Index";
 }
 
+@functions{
+	public string isSelected(string value, string comp)
+	{
+		string selected = "";
+		if (value == comp) { selected = "selected"; }
+		return selected;
+	}
+}
+
 <h1 style="text-align: center">Shop Items</h1>
 
 <p>
@@ -20,6 +29,12 @@
 				<select asp-for="CategoryId" asp-items="Model.CategoryList" class="form-select" title="View items for a specific category">
 					<option value="">All Categories...</option>
 				</select>
+				<select name="sortOrder" class="form-select" title="Sort items by name or price">
+					<!option value="" @isSelected("", ViewBag.sortOrder)>Item Name [asc]</!option>
+					<!option value="name_desc" @isSelected("name_desc", ViewBag.sortOrder)>Item Name [desc]</!option>
+					<!option value="price_asc" @isSelected("price_asc", ViewBag.sortOrder)>Item Price [asc]</!option>
+					<!option value="price_desc" @isSelected("price_desc", ViewBag.sortOrder)>Item Price [desc]</!option>
+				</select>
 			</div>
 		</div>
 		<div class="col-lg">
@@ -31,11 +46,11 @@
 
 <div>
 	@{
-		if (ViewBag.itemCount > 0)
+		if ((!string.IsNullOrWhiteSpace(Model.SearchText) || Model.CategoryId.HasValue) && ViewBag.itemCount > 0)
 		{
 			<p>@ViewBag.itemCount @ViewBag.plural</p>
 		}
-		else
+		else if (ViewBag.itemCount == 0)
 		{
 			<h5 class="text-danger mb-4">No results were found!</h5>
 		}

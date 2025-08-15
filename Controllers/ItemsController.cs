@@ -21,7 +21,7 @@ namespace WebAppTest.Controllers
         }
 
         // GET: Items
-        public async Task<IActionResult> Index(ItemSearchViewModel vm)
+        public async Task<IActionResult> Index(ItemSearchViewModel vm, string? sortOrder)
         {
             #region CategoriesQuery
             var Categories = await _context.ItemCategories
@@ -58,8 +58,27 @@ namespace WebAppTest.Controllers
                     .Where(i => i.Category.ParentCategoryId == vm.CategoryId);
             }
 
+            ViewBag.sortOrder = sortOrder;
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    amazonOrders2025Context = amazonOrders2025Context.OrderByDescending(i => i.ItemName);
+                    break;
+
+                case "price_asc":
+                    amazonOrders2025Context = amazonOrders2025Context.OrderBy(i => i.ItemCost);
+                    break;
+
+                case "price_desc":
+                    amazonOrders2025Context = amazonOrders2025Context.OrderByDescending(i => i.ItemCost);
+                    break;
+
+                default:
+                    amazonOrders2025Context = amazonOrders2025Context.OrderBy(i => i.ItemName);
+                    break;
+            }
+
             vm.ItemList = await amazonOrders2025Context
-                .OrderBy(i => i.ItemName)
                 .Select(i => new Item_ItemDetail
                 {
                     TheItem = i,
@@ -68,7 +87,7 @@ namespace WebAppTest.Controllers
                 })
                 .ToListAsync();
 
-            ViewBag.itemCount = amazonOrders2025Context.Count();
+            ViewBag.itemCount = vm.ItemList.Count;
             ViewBag.plural = (ViewBag.itemCount == 1) ? "result:" : "results:";
             #endregion
 
