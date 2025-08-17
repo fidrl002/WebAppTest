@@ -1,0 +1,92 @@
+﻿@model WebAppTest.ViewModels.CustomerSearchVM;
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Customers</h1>
+
+<form method="post" asp-controller="Customers" asp-action="Index">
+    <div class="row g-2">
+        <div class="col-lg-8">
+            <div class="input-group mb-3">
+	            <div class="input-group mb-3">
+		            <input asp-for="SearchText" type="text" max-length="100" class="form-control" placeholder="Customer name..."
+			               title="Search by Customer name." />
+		            <select asp-for="Suburb" asp-items="@Model.SuburbList" class="form-select" title="Search by suburb">
+			            <option value="">All Suburbs...</option>
+		            </select>
+	            </div>
+            </div>
+        </div>
+        <div class="col-lg">
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+            <a asp-controller="Customers" asp-action="Index" button="reset" class="btn btn-outline-danger">Reset</a>
+			<a asp-controller="Customers" asp-action="Create" button="submit" class="btn btn-primary">Create New</a>
+		</div>
+    </div>
+</form>
+
+<div>
+	@{
+		if ((!string.IsNullOrWhiteSpace(Model.SearchText) || !string.IsNullOrWhiteSpace(Model.Suburb)) && ViewBag.customerCount > 0)
+		{
+			<p>@ViewBag.customerCount @ViewBag.plural</p>
+		}
+		else if (ViewBag.customerCount == 0)
+		{
+			<h5 class="alert alert-danger">No records found!</h5>
+		}
+	}
+</div>
+
+@if(Model.CustomerList != null && Model.CustomerList.Count > 0)
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>
+					@Html.DisplayNameFor(model => model.CustomerList[0].FullName)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.CustomerList[0].Email)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.CustomerList[0].ContactNumber)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => model.CustomerList[0].Address)
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.CustomerList)
+			{
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => item.FullName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => item.Email)
+					</td>
+					<td>
+						@Html.Raw(item.ContactNumber)
+					</td>
+					<td>
+						@Html.Raw(item.FullAddress)
+					</td>
+					<td>
+						<a asp-action="Edit" asp-route-id="@item.CustomerId">Edit</a> |
+						<a asp-action="Details" asp-route-id="@item.CustomerId">Details</a> |
+						<a asp-action="Delete" asp-route-id="@item.CustomerId">Delete</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else if (Model.CustomerList == null)
+{
+	<h5 class="alert alert-info">Search for a Name or Suburb to see customers</h5>
+}
