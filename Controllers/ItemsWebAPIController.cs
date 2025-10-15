@@ -23,7 +23,7 @@ namespace WebAppTest.Controllers
 
         // GET: api/ItemsWebAPI
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Item>>> GetItems(string? searchText, int? categoryID)
+        public async Task<ActionResult<IEnumerable<Item>>> GetItems(string? searchText, int? categoryId)
         {
             var query = _context.Items
                 .OrderBy(i => i.ItemName)
@@ -35,10 +35,10 @@ namespace WebAppTest.Controllers
                     .Where(i => i.ItemName.Contains(searchText));
             }
 
-            if (categoryID.HasValue)
+            if (categoryId.HasValue)
             {
                 query = query
-                    .Where(i => i.Category.ParentCategoryId == categoryID);
+                    .Where(i => i.Category.ParentCategoryId == categoryId);
             }
 
             return await query.ToListAsync();
