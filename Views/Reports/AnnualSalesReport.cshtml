@@ -1,0 +1,14 @@
+﻿@model SelectList
+@{
+    ViewBag.Title = "Annual Sales";
+}
+
+<h2 style="text-align: center">AnnualSalesReport.cshtml</h2>
+
+<div class="row mb-3">
+    <div class="col-2">
+        <select name="year" asp-items="@Model" class="form-control">
+            <option value="">Select...</option>
+        </select>
+    </div>
+</div>
