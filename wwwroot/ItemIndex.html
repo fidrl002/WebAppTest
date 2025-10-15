@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Bootstrap demo</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
 <body>
@@ -86,7 +87,8 @@
         function buildItems(data) {
             var row = document.querySelector(".row.justify-content-between");
 
-            let oldCols = row.querySelectorAll("div.col-4:not([hidden])")
+            let oldCols = row.querySelectorAll("div.col-4:not([hidden])");
+            // OR row.replaceChildren();
 
             oldCols.forEach(oc => {
                 row.removeChild(oc);
@@ -99,7 +101,7 @@
                 col.querySelector("h5").innerText = data[i].itemName;
                 let pList = col.querySelectorAll("p");
                 pList[0].innerText = data[i].itemDescription;
-                pList[1].innerText = data[i].itemCost;
+                pList[1].innerText = `Price: $${data[i].itemCost}`;
 
                 let img = col.querySelector("img");
                 img.setAttribute("src", data[i].itemImage);
