@@ -29,7 +29,7 @@ function App() {
                     itemImage="https://upload.wikimedia.org/wikipedia/commons/0/04/So_happy_smiling_cat.jpg"
                     itemCost="5.00"
                 />
-                <CardList></CardList>
+                <CardList />
             </div>
         </div>
     );
