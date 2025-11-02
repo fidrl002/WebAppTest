@@ -20,6 +20,7 @@ function App() {
                             <Link className="nav-link active" aria-current="page" to="/Home">Home</Link>
                             <Link className="nav-link" to="/Contact">Contact</Link>
                             <Link className="nav-link" to="/Products">Products</Link>
+                            <Link className="nav-link" to="/Graph">Graph</Link>
                         </div>
                     </div>
                 </div>
