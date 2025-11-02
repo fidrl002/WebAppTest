@@ -24,7 +24,6 @@ function CardListSearch() {
 
     function searchQuery() {
         const value = document.querySelector('[name="searchText"]').value;
-        alert('value: ' + value);
         setQuery(value);
     }
 
