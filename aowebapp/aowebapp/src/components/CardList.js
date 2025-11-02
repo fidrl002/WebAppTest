@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect } from 'react'
-import CardV3 from "./CardV3"
+﻿import React, { useState, useEffect } from 'react';
+import CardV3 from "./CardV3";
 //import cardData from "../assets/itemData.json"
 
 function CardListSearch() {
